@@ -3,6 +3,8 @@ package com.github.nikita.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.time.LocalDateTime;
+
 @DatabaseTable(tableName = "User_Transaction")
 public class UserTransaction {
     @DatabaseField(generatedId = true, columnName = "id")
@@ -16,11 +18,11 @@ public class UserTransaction {
     @DatabaseField(columnName = "status")
     private Status status;
     @DatabaseField(columnName = "beginTime")
-    private String beginTime;
+    private LocalDateTime beginTime;
     @DatabaseField(columnName = "endTime")
-    private String endTime;
+    private LocalDateTime endTime;
 
-    UserTransaction() {}
+    public UserTransaction() {}
 
     public int getId() {
         return id;
@@ -62,19 +64,19 @@ public class UserTransaction {
         this.status = status;
     }
 
-    public String getBeginTime() {
+    public LocalDateTime getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(String beginTime) {
+    public void setBeginTime(LocalDateTime beginTime) {
         this.beginTime = beginTime;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 }

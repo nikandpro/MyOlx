@@ -2,18 +2,9 @@ package com.github.nikita;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.nikita.deserialize.CategoriesDeserialize;
-import com.github.nikita.deserialize.CategoriesProductDeserialize;
-import com.github.nikita.deserialize.ProductDeserialize;
-import com.github.nikita.deserialize.UserDeserialize;
-import com.github.nikita.model.Categories;
-import com.github.nikita.model.CategoriesProduct;
-import com.github.nikita.model.Product;
-import com.github.nikita.model.User;
-import com.github.nikita.serialize.CategoriesProductSerialize;
-import com.github.nikita.serialize.CategoriesSerialize;
-import com.github.nikita.serialize.ProductSerialize;
-import com.github.nikita.serialize.UserSerialize;
+import com.github.nikita.deserialize.*;
+import com.github.nikita.model.*;
+import com.github.nikita.serialize.*;
 
 public class ObjectMapperFactory {
 
@@ -32,6 +23,12 @@ public class ObjectMapperFactory {
         } else if (CategoriesProduct.class == nameClass) {
             sm.addSerializer(CategoriesProduct.class, new CategoriesProductSerialize()).addSerializer(new ProductSerialize()).addSerializer(new UserSerialize()).addSerializer(new CategoriesSerialize());
             sm.addDeserializer(CategoriesProduct.class, new CategoriesProductDeserialize());
+        }  if (Reviews.class == nameClass) {
+            sm.addSerializer(Reviews.class, new ReviewsSerialize()).addSerializer(new UserSerialize()).addSerializer(new ProductSerialize());
+            sm.addDeserializer(Reviews.class, new ReviewsDeserialize());
+        } else if (UserTransaction.class == nameClass) {
+            //sm.addSerializer(UserTransaction.class, new ReviewsSerialize()).addSerializer(new UserSerialize()).addSerializer(new ProductSerialize());
+            sm.addDeserializer(UserTransaction.class, new UserTransactionDeserialize());
         }
         return om.registerModule(sm);
     }

@@ -3,10 +3,13 @@ package com.github.nikita;
 import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
+import com.github.nikita.model.UserTransaction;
 import io.javalin.http.Context;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SecurityService {
     public static String encryption(String password) {
@@ -45,5 +48,16 @@ public class SecurityService {
             ctx.status(404);
             throw new RuntimeException();
         }
+    }
+
+    public static List<UserTransaction> searchUserTran(Context ctx) throws SQLException {
+        List<UserTransaction> userTransactionList = new ArrayList<>();
+        User user = searchUser(ctx);
+        for (UserTransaction userTran: DatabaseConfiguration.usTranDao.queryForAll()) {
+            if (userTran.getBuyer()==user) {
+                userTransactionList.add(userTran);
+            }
+        }
+        return userTransactionList;
     }
 }

@@ -58,13 +58,17 @@ public class CategoriesController {
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 int id = Integer.parseInt(ctx.pathParam("id"));
-                ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
-                categ = obMap.readValue(json, Categories.class);
-                categ.setId(id);
-                DatabaseConfiguration.categDao.update(categ);
-                ctx.status(201);
+                if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
+                    ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
+                    categ = obMap.readValue(json, Categories.class);
+                    categ.setId(id);
+                    DatabaseConfiguration.categDao.update(categ);
+                    ctx.status(201);
+                } else {
+                    ctx.status(403);
+                }
             } else {
-                ctx.status(403);
+                ctx.status(404);
             }
         } else {
             ctx.status(401);
@@ -75,11 +79,15 @@ public class CategoriesController {
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 int id = Integer.parseInt(ctx.pathParam("id"));
-                DatabaseConfiguration.categDao.deleteById(id);
-                System.out.println(id);
-                ctx.status(204);
+                if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
+                    DatabaseConfiguration.categDao.deleteById(id);
+                    System.out.println(id);
+                    ctx.status(204);
+                } else {
+                    ctx.status(403);
+                }
             } else {
-                ctx.status(403);
+                ctx.status(404);
             }
         } else {
             ctx.status(401);

@@ -1,9 +1,6 @@
 package com.github.nikita;
 
-import com.github.nikita.controller.CategoriesController;
-import com.github.nikita.controller.CategoriesProductController;
-import com.github.nikita.controller.ProductController;
-import com.github.nikita.controller.UserController;
+import com.github.nikita.controller.*;
 import io.javalin.Javalin;
 
 public class Main {
@@ -32,6 +29,17 @@ public class Main {
         app.get("categoriesProduct/:id", CategoriesProductController::getOneCategoriesProduct);
         app.patch("categoriesProduct/:id", CategoriesProductController::updateCategoriesProduct);
         app.delete("categoriesProduct/:id", CategoriesProductController::deleteCategoriesProduct);
+
+        app.post("reviews", ReviewsController::createReviews);
+        app.get("reviews", ReviewsController::getAllReviews);
+        app.get("reviews/:id", ReviewsController::getOneReviews);
+        app.patch("reviews/:id", ReviewsController::updateReviews);
+        app.delete("reviews/:id", ReviewsController::deleteReviews);
+
+        app.post("usTran", UserTransactionController::createUserTran);
+        app.get("usTran", UserTransactionController::getAllUserTran);
+        app.get("usTran/:id", UserTransactionController::getOneUserTran);
+        app.delete("usTran/:id", UserTransactionController::deleteUserTran);
     }
 
 }

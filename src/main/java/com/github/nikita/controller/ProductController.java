@@ -57,16 +57,24 @@ public class ProductController {
             prod.setSeller(SecurityService.searchUser(ctx));
             int id = Integer.parseInt(ctx.pathParam("id"));
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                prod.setId(id);
-                DatabaseConfiguration.prodDao.update(prod);
-                ctx.status(201);
-            } else if (SecurityService.authorization(ctx) == Role.USER) {
-                if (DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
+                if (DatabaseConfiguration.prodDao.queryForId(id) != null) {
                     prod.setId(id);
                     DatabaseConfiguration.prodDao.update(prod);
                     ctx.status(201);
                 } else {
-                    ctx.status(403);
+                    ctx.status(404);
+                }
+            } else if (SecurityService.authorization(ctx) == Role.USER) {
+                if (DatabaseConfiguration.prodDao.queryForId(id) != null) {
+                    if (DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
+                        prod.setId(id);
+                        DatabaseConfiguration.prodDao.update(prod);
+                        ctx.status(201);
+                    } else {
+                        ctx.status(403);
+                    }
+                } else {
+                    ctx.status(404);
                 }
             }
         } else {
@@ -78,8 +86,12 @@ public class ProductController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                DatabaseConfiguration.prodDao.deleteById(id);
-                ctx.status(204);
+                if (DatabaseConfiguration.prodDao.queryForId(id) != null) {
+                    DatabaseConfiguration.prodDao.deleteById(id);
+                    ctx.status(204);
+                } else {
+                    ctx.status(404);
+                }
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 if (DatabaseConfiguration.prodDao.queryForId(id) != null) {
                     if (SecurityService.searchUser(ctx).getId() == DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId()) {

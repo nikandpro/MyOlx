@@ -14,7 +14,7 @@ public class Reviews {
     @DatabaseField(columnName = "reviews")
     private String text;
 
-    Reviews() {
+    public Reviews() {
     }
 
     public int getId() {

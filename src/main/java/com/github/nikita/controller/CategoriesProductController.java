@@ -55,18 +55,24 @@ public class CategoriesProductController {
             categProd = obMap.readValue(json, CategoriesProduct.class);
             int id = Integer.parseInt(ctx.pathParam("id"));
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                categProd.setId(id);
-                DatabaseConfiguration.catProdDao.update(categProd);
-                ctx.status(201);
-            } else if (SecurityService.authorization(ctx) == Role.USER) {
-                System.out.println(DatabaseConfiguration.catProdDao.queryForId(id).getProduct().getSeller().getId());
-                if (DatabaseConfiguration.catProdDao.queryForId(id).getProduct().getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
-                    System.out.println("dfghfh");
+                if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
                     categProd.setId(id);
                     DatabaseConfiguration.catProdDao.update(categProd);
                     ctx.status(201);
                 } else {
-                    ctx.status(403);
+                    ctx.status(404);
+                }
+            } else if (SecurityService.authorization(ctx) == Role.USER) {
+                if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
+                    if (DatabaseConfiguration.catProdDao.queryForId(id).getProduct().getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
+                        categProd.setId(id);
+                        DatabaseConfiguration.catProdDao.update(categProd);
+                        ctx.status(201);
+                    } else {
+                        ctx.status(403);
+                    }
+                } else {
+                    ctx.status(404);
                 }
             }
         } else {
@@ -78,8 +84,12 @@ public class CategoriesProductController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                DatabaseConfiguration.catProdDao.deleteById(id);
-                ctx.status(204);
+                if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
+                    DatabaseConfiguration.catProdDao.deleteById(id);
+                    ctx.status(204);
+                } else {
+                    ctx.status(404);
+                }
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 if (DatabaseConfiguration.catProdDao.queryForId(id) != null) {
                     if (SecurityService.searchUser(ctx).getId() == DatabaseConfiguration.catProdDao.queryForId(id).getProduct().getSeller().getId()) {
