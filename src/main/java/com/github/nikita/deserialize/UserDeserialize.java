@@ -28,7 +28,7 @@ public class UserDeserialize extends StdDeserializer<User> {
         user.setBalance(node.get("balance").asInt());
         user.setPhone(node.get("phone").asText());
         user.setEmail(node.get("email").asText());
-        user.setRole(Role.valueOf("ADMIN"));
+        user.setRole(Role.valueOf("USER"));
         return user;
     }
 }

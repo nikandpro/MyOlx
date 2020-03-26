@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
 import com.github.nikita.configuration.DatabaseConfiguration;
+import com.github.nikita.model.Product;
 import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
 import io.javalin.http.Context;
@@ -12,34 +13,34 @@ import io.javalin.http.Context;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class UserController {
-
-    public static void createUser(Context ctx) throws IOException, SQLException {
+public class ProductController {
+    public static void createProduct(Context ctx) throws IOException, SQLException {
         String json = ctx.body();
-        User user;
-        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
-        user = obMap.readValue(json, User.class);
-        DatabaseConfiguration.userDao.create(user);
+        Product product;
+        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Product.class);
+        product = obMap.readValue(json, Product.class);
+        product.setSeller(SecurityService.searchUser(ctx));
+        DatabaseConfiguration.prodDao.create(product);
         ctx.status(201);
     }
 
-    public static void getAllUser(Context ctx) throws SQLException, JsonProcessingException {
+    public static void getAllProduct(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
-            ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
-            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.userDao.queryForAll()));
+            ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Product.class);
+            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.prodDao.queryForAll()));
             ctx.status(201);
         } else
             ctx.status(401);
     }
 
-    public static void getOneUser(Context ctx) throws SQLException, JsonProcessingException {
+    public static void getOneProduct(Context ctx) throws SQLException, JsonProcessingException {
         boolean find = false;
         if (SecurityService.authentication(ctx)) {
-            ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
+            ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Product.class);
             int id = Integer.parseInt(ctx.pathParam("id"));
-            for (User user : DatabaseConfiguration.userDao.queryForAll()) {
-                if (user.getId() == id) {
-                    ctx.result(obMap.writeValueAsString(user));
+            for (Product product : DatabaseConfiguration.prodDao.queryForAll()) {
+                if (product.getId() == id) {
+                    ctx.result(obMap.writeValueAsString(product));
                     find = true;
                 }
                 if (find) {
@@ -47,29 +48,24 @@ public class UserController {
                 } else {
                     ctx.status(404);
                 }
-
             }
         } else
             ctx.status(401);
     }
 
-    public static void updateUser(Context ctx) throws SQLException, IOException {
+    /*public static void updateProduct(Context ctx) throws SQLException, IOException {
         String json = ctx.body();
-        User user;
+        Product prod;
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
         if (SecurityService.authentication(ctx)) {
-            int id = Integer.parseInt(ctx.pathParam("id"));
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                user = obMap.readValue(json, User.class);
-                user.setId(id);
-                DatabaseConfiguration.userDao.update(user);
-                ctx.status(201);
+                prod = obMap.readValue(json, Product.class);
+                DatabaseConfiguration.prodDao.update(prod);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
-                user = obMap.readValue(json, User.class);
-                if (id == SecurityService.searchUser(ctx).getId()) {
-                    user.setId(id);
-                    DatabaseConfiguration.userDao.update(user);
-                    ctx.status(201);
+                int id = Integer.parseInt(ctx.pathParam("id"));
+                prod = obMap.readValue(json, Product.class);
+                if (prod == SecurityService.searchUser(ctx).getId()) {
+                    DatabaseConfiguration.prodDao.update(prod);
                 } else {
                     ctx.status(403);
                 }
@@ -77,9 +73,9 @@ public class UserController {
         } else {
             ctx.status(401);
         }
-    }
+    }*/
 
-    public static void deleteUser(Context ctx) throws SQLException {
+    public static void deleteProduct(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
@@ -98,4 +94,3 @@ public class UserController {
         }
     }
 }
-

@@ -16,7 +16,7 @@ public class Product {
     @DatabaseField(columnName = "price")
     private int price;
 
-    Product() {}
+    public Product() {}
 
     public int getId() {
         return id;

@@ -35,7 +35,7 @@ public class SecurityService {
         String userName = ctx.basicAuthCredentials().getUsername();
         User user=null;
         for (User us : DatabaseConfiguration.userDao.queryForAll()) {
-            if (us.getFname().equals(userName)) {
+            if (us.getLogin().equals(userName)) {
                 user=us;
             }
         }
