@@ -20,9 +20,10 @@ public class ProductSerialize extends StdSerializer<Product> {
     public void serialize(Product product, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", product.getId());
-        //jsonGenerator.writeStringField("nameProd", product.getNameProd());
-        //jsonGenerator.writeStringField("adress", product.getAdress());
-        //jsonGenerator.writeObjectField("seller", product.getSeller());
+        jsonGenerator.writeStringField("nameProd", product.getNameProd());
+        jsonGenerator.writeStringField("adress", product.getAdress());
+        jsonGenerator.writeNumberField("price", product.getPrice());
+        jsonGenerator.writeObjectField("seller", product.getSeller());
         jsonGenerator.writeEndObject();
     }
 }

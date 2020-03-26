@@ -42,12 +42,11 @@ public class UserController {
                     ctx.result(obMap.writeValueAsString(user));
                     find = true;
                 }
-                if (find) {
-                    ctx.status(201);
-                } else {
-                    ctx.status(404);
-                }
-
+            }
+            if (find) {
+                ctx.status(201);
+            } else {
+                ctx.status(404);
             }
         } else
             ctx.status(401);

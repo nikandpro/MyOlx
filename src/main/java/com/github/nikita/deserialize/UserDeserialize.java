@@ -20,7 +20,7 @@ public class UserDeserialize extends StdDeserializer<User> {
     public User deserialize(JsonParser parser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         User user = new User();
         JsonNode node = parser.getCodec().readTree(parser);
-        user.setId(0);
+        user.setId(1);
         user.setLogin(node.get("login").asText());
         user.setPassword(SecurityService.encryption(node.get("password").asText()));
         user.setFname(node.get("fname").asText());

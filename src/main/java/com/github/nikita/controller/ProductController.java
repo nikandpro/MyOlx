@@ -53,18 +53,20 @@ public class ProductController {
             ctx.status(401);
     }
 
-    /*public static void updateProduct(Context ctx) throws SQLException, IOException {
+    public static void updateProduct(Context ctx) throws SQLException, IOException {
         String json = ctx.body();
         Product prod;
-        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
         if (SecurityService.authentication(ctx)) {
+            ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Product.class);
+            prod = obMap.readValue(json, Product.class);
+            prod.setSeller(SecurityService.searchUser(ctx));
+            int id = Integer.parseInt(ctx.pathParam("id"));
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                prod = obMap.readValue(json, Product.class);
+                prod.setId(id);
                 DatabaseConfiguration.prodDao.update(prod);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
-                int id = Integer.parseInt(ctx.pathParam("id"));
-                prod = obMap.readValue(json, Product.class);
-                if (prod == SecurityService.searchUser(ctx).getId()) {
+                if (DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
+                    prod.setId(id);
                     DatabaseConfiguration.prodDao.update(prod);
                 } else {
                     ctx.status(403);
@@ -73,20 +75,24 @@ public class ProductController {
         } else {
             ctx.status(401);
         }
-    }*/
+    }
 
     public static void deleteProduct(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                DatabaseConfiguration.userDao.deleteById(id);
+                DatabaseConfiguration.prodDao.deleteById(id);
                 ctx.status(204);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
-                if (SecurityService.searchUser(ctx).getId() == id) {
-                    DatabaseConfiguration.userDao.deleteById(id);
-                    ctx.status(204);
+                if (DatabaseConfiguration.prodDao.queryForId(id) != null) {
+                    if (SecurityService.searchUser(ctx).getId() == DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId()) {
+                        DatabaseConfiguration.prodDao.deleteById(id);
+                        ctx.status(204);
+                    } else {
+                        ctx.status(403);
+                    }
                 } else {
-                    ctx.status(403);
+                    ctx.status(404);
                 }
             }
         } else {

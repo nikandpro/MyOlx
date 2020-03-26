@@ -16,7 +16,7 @@ public class Main {
         app.post("product", ProductController::createProduct);
         app.get("product", ProductController::getAllProduct);
         app.get("product/:id", ProductController::getOneProduct);
-        //app.patch("product/:id", ProductController:);
+        app.patch("product/:id", ProductController::updateProduct);
         app.delete("product/:id", ProductController::deleteProduct);
     }
 
