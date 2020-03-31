@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
 import com.github.nikita.configuration.DatabaseConfiguration;
-import com.github.nikita.model.Categories;
-import com.github.nikita.model.Product;
-import com.github.nikita.model.Role;
-import com.github.nikita.model.User;
+import com.github.nikita.model.*;
 import io.javalin.http.Context;
 
 import java.io.IOException;
@@ -19,7 +16,7 @@ public class CategoriesController {
     public static void createCategories(Context ctx) throws IOException, SQLException {
         String json = ctx.body();
         Categories categ;
-        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
+        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(CategoriesProduct.class);
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 categ = obMap.readValue(json, Categories.class);

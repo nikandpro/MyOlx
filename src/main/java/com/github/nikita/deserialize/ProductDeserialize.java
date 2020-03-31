@@ -16,8 +16,6 @@ import java.sql.SQLException;
 
 public class ProductDeserialize extends StdDeserializer<Product> {
 
-    Context ctx;
-
     public ProductDeserialize() {
         super(Product.class);
     }

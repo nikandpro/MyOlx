@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class ProductController {
+
     public static void createProduct(Context ctx) throws IOException, SQLException {
         String json = ctx.body();
         Product product;
@@ -58,10 +59,12 @@ public class ProductController {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 prod.setId(id);
                 DatabaseConfiguration.prodDao.update(prod);
+                ctx.status(201);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 if (DatabaseConfiguration.prodDao.queryForId(id).getSeller().getId() == SecurityService.searchUser(ctx).getId()) {
                     prod.setId(id);
                     DatabaseConfiguration.prodDao.update(prod);
+                    ctx.status(201);
                 } else {
                     ctx.status(403);
                 }

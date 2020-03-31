@@ -1,6 +1,7 @@
 package com.github.nikita;
 
 import com.github.nikita.controller.CategoriesController;
+import com.github.nikita.controller.CategoriesProductController;
 import com.github.nikita.controller.ProductController;
 import com.github.nikita.controller.UserController;
 import io.javalin.Javalin;
@@ -25,6 +26,12 @@ public class Main {
         app.get("categories/:id", CategoriesController::getOneCategories);
         app.patch("categories/:id", CategoriesController::updateCategories);
         app.delete("categories/:id", CategoriesController::deleteCategories);
+
+        app.post("categoriesProduct", CategoriesProductController::createCategoriesProduct);
+        app.get("categoriesProduct", CategoriesProductController::getAllCategoriesProduct);
+        app.get("categoriesProduct/:id", CategoriesProductController::getOneCategoriesProduct);
+        app.patch("categoriesProduct/:id", CategoriesProductController::updateCategoriesProduct);
+        app.delete("categoriesProduct/:id", CategoriesProductController::deleteCategoriesProduct);
     }
 
 }

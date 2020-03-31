@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "Categoies_Product")
-public class CategoiesProduct {
+public class CategoriesProduct {
     @DatabaseField(generatedId = true, columnName = "id")
     private int id;
     @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "categoeis")
@@ -12,7 +12,7 @@ public class CategoiesProduct {
     @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "product")
     private Product product;
 
-    CategoiesProduct() {}
+    public CategoriesProduct() {}
 
     public int getId() {
         return id;
