@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
 import com.github.nikita.configuration.DatabaseConfiguration;
+import com.github.nikita.model.Product;
 import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
 import io.javalin.http.Context;
@@ -33,21 +34,15 @@ public class UserController {
     }
 
     public static void getOneUser(Context ctx) throws SQLException, JsonProcessingException {
-        boolean find = false;
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
             int id = Integer.parseInt(ctx.pathParam("id"));
-            for (User user : DatabaseConfiguration.userDao.queryForAll()) {
-                if (user.getId() == id) {
-                    ctx.result(obMap.writeValueAsString(user));
-                    find = true;
-                }
-            }
-            if (find) {
+            User user = DatabaseConfiguration.userDao.queryForId(id);
+            if (user != null) {
+                ctx.result(obMap.writeValueAsString(user));
                 ctx.status(201);
-            } else {
+            } else
                 ctx.status(404);
-            }
         } else
             ctx.status(401);
     }

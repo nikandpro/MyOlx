@@ -34,21 +34,15 @@ public class ProductController {
     }
 
     public static void getOneProduct(Context ctx) throws SQLException, JsonProcessingException {
-        boolean find = false;
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Product.class);
             int id = Integer.parseInt(ctx.pathParam("id"));
-            for (Product product : DatabaseConfiguration.prodDao.queryForAll()) {
-                if (product.getId() == id) {
-                    ctx.result(obMap.writeValueAsString(product));
-                    find = true;
-                }
-                if (find) {
-                    ctx.status(201);
-                } else {
-                    ctx.status(404);
-                }
-            }
+            Product product = DatabaseConfiguration.prodDao.queryForId(id);
+            if (product != null) {
+                ctx.result(obMap.writeValueAsString(product));
+                ctx.status(201);
+            } else
+                ctx.status(404);
         } else
             ctx.status(401);
     }

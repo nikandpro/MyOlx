@@ -6,6 +6,7 @@ import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
 import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.Categories;
+import com.github.nikita.model.Product;
 import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
 import io.javalin.http.Context;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 
 public class CategoriesController {
 
-    public static void createUser(Context ctx) throws IOException, SQLException {
+    public static void createCategories(Context ctx) throws IOException, SQLException {
         String json = ctx.body();
         Categories categ;
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
@@ -32,7 +33,7 @@ public class CategoriesController {
         }
     }
 
-    public static void getAllUser(Context ctx) throws SQLException, JsonProcessingException {
+    public static void getAllCategories(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
             ctx.result(obMap.writeValueAsString(DatabaseConfiguration.categDao.queryForAll()));
@@ -40,27 +41,31 @@ public class CategoriesController {
             ctx.status(401);
     }
 
-    public static void getOneUser(Context ctx) throws SQLException, JsonProcessingException {
+    public static void getOneCategories(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
             int id = Integer.parseInt(ctx.pathParam("id"));
-            for (Categories categ : DatabaseConfiguration.categDao.queryForAll()) {
-                if (categ.getId() == id) {
-                    ctx.result(obMap.writeValueAsString(categ));
-                }
-            }
+            Categories categ = DatabaseConfiguration.categDao.queryForId(id);
+            if (categ != null) {
+                ctx.result(obMap.writeValueAsString(categ));
+                ctx.status(201);
+            } else
+                ctx.status(404);
         } else
             ctx.status(401);
     }
 
-    public static void updateUser(Context ctx) throws SQLException, IOException {
+    public static void updateCategories(Context ctx) throws SQLException, IOException {
         String json = ctx.body();
         Categories categ;
-        ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
+                int id = Integer.parseInt(ctx.pathParam("id"));
+                ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
                 categ = obMap.readValue(json, Categories.class);
+                categ.setId(id);
                 DatabaseConfiguration.categDao.update(categ);
+                ctx.status(201);
             } else {
                 ctx.status(403);
             }
@@ -69,11 +74,12 @@ public class CategoriesController {
         }
     }
 
-    public static void deleteUser(Context ctx) throws SQLException {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+    public static void deleteCategories(Context ctx) throws SQLException {
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
-                DatabaseConfiguration.userDao.deleteById(id);
+                int id = Integer.parseInt(ctx.pathParam("id"));
+                DatabaseConfiguration.categDao.deleteById(id);
+                System.out.println(id);
                 ctx.status(204);
             } else {
                 ctx.status(403);

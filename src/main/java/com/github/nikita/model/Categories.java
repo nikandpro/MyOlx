@@ -10,7 +10,7 @@ public class Categories {
     @DatabaseField(columnName = "categories_name")
     private String categoriesName;
 
-    Categories() {}
+    public Categories() {}
 
     public int getId() {
         return id;
