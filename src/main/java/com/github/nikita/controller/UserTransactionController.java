@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
 import com.github.nikita.configuration.DatabaseConfiguration;
-import com.github.nikita.model.Reviews;
-import com.github.nikita.model.Role;
-import com.github.nikita.model.Status;
-import com.github.nikita.model.UserTransaction;
+import com.github.nikita.model.*;
 import io.javalin.http.Context;
 
 import java.io.IOException;
@@ -25,20 +22,33 @@ public class UserTransactionController {
         if (userTran.getStatus()==Status.CONFIRM) {
             boolean seach = false;
             for (UserTransaction usTr : DatabaseConfiguration.usTranDao.queryForAll()) {
-                if (usTr.getStatus() == Status.BUY && usTr.getSeller() == userTran.getSeller() && usTr.getBuyer() == userTran.getBuyer()) {
+                if (usTr.getStatus() == Status.BUY && usTr.getSeller().equals(userTran.getSeller()) && usTr.getBuyer().equals(userTran.getBuyer()) && usTr.getProduct().equals(userTran.getProduct())) {
                     if (!seach) {
+                        System.out.println("gfgsdgsd"+userTran.getId());
                         userTran.setBeginTime(usTr.getBeginTime());
                         userTran.setId(usTr.getId());
-                        DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId()).setBalance(DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId()).getBalance()+userTran.getMoney());
+
+                        User user = DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId());
+                        System.out.println(DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).getBalance()+userTran.getMoney());
+                        System.out.println(user.getBalance());
+                        user.setBalance(user.getBalance()-userTran.getMoney());
+                        DatabaseConfiguration.userDao.update(user);
+
                         DatabaseConfiguration.usTranDao.delete(usTr);
                         seach = true;
                     }
                 }
+                System.out.println(usTr.getId());
+                System.out.println("1"+usTr.getStatus()+usTr.getSeller().getFname()+usTr.getBuyer().getFname());
+                System.out.println("2"+userTran.getSeller().getFname()+userTran.getBuyer().getFname());
             }
 
         } else {
-            DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).setBalance(DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).getBalance()-userTran.getMoney());
-
+            User user = DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId());
+            System.out.println(DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).getBalance()-userTran.getMoney());
+            System.out.println(user.getBalance());
+            user.setBalance(user.getBalance()-userTran.getMoney());
+            DatabaseConfiguration.userDao.update(user);
         }
         DatabaseConfiguration.usTranDao.create(userTran);
         ctx.status(201);

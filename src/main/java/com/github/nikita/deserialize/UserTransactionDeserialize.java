@@ -28,18 +28,20 @@ public class UserTransactionDeserialize extends StdDeserializer<UserTransaction>
             userTran.setId(0);
             try {
                 Product product = DatabaseConfiguration.prodDao.queryForId(node.get("product").asInt());
+                userTran.setProduct(product);
                 userTran.setSeller(product.getSeller());
                 userTran.setMoney(product.getPrice());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             userTran.setStatus(Status.BUY);
-            userTran.setBeginTime(LocalDateTime.now());
+            userTran.setBeginTime(LocalDateTime.now().toString());
             userTran.setEndTime(null);
         } else {
             userTran.setId(0);
             try {
                 Product product = DatabaseConfiguration.prodDao.queryForId(node.get("product").asInt());
+                userTran.setProduct(product);
                 userTran.setSeller(product.getSeller());
                 userTran.setMoney(product.getPrice());
             } catch (SQLException e) {
@@ -47,7 +49,7 @@ public class UserTransactionDeserialize extends StdDeserializer<UserTransaction>
             }
             userTran.setStatus(Status.CONFIRM);
             userTran.setBeginTime(null);
-            userTran.setEndTime(LocalDateTime.now());
+            userTran.setEndTime(LocalDateTime.now().toString());
         }
 
         return userTran;
