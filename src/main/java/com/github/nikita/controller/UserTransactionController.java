@@ -19,38 +19,31 @@ public class UserTransactionController {
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
         userTran = obMap.readValue(json, UserTransaction.class);
         userTran.setBuyer(SecurityService.searchUser(ctx));
+        //System.out.println("OKKK");
         if (userTran.getStatus()==Status.CONFIRM) {
             boolean seach = false;
+            //System.out.println("KKKKKKOOOOOOOOOO");
             for (UserTransaction usTr : DatabaseConfiguration.usTranDao.queryForAll()) {
-                if (usTr.getStatus() == Status.BUY && usTr.getSeller().equals(userTran.getSeller()) && usTr.getBuyer().equals(userTran.getBuyer()) && usTr.getProduct().equals(userTran.getProduct())) {
+                if (usTr.getStatus() == Status.BUY && usTr.getSeller().getId()==userTran.getSeller().getId() && usTr.getBuyer().getId()==userTran.getBuyer().getId() && usTr.getProduct().getId()==userTran.getProduct().getId()) {
                     if (!seach) {
-                        System.out.println("gfgsdgsd"+userTran.getId());
                         userTran.setBeginTime(usTr.getBeginTime());
                         userTran.setId(usTr.getId());
 
                         User user = DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId());
-                        System.out.println(DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).getBalance()+userTran.getMoney());
-                        System.out.println(user.getBalance());
-                        user.setBalance(user.getBalance()-userTran.getMoney());
+                        user.setBalance(user.getBalance()+userTran.getMoney());
                         DatabaseConfiguration.userDao.update(user);
-
-                        DatabaseConfiguration.usTranDao.delete(usTr);
+                        
                         seach = true;
+                        DatabaseConfiguration.usTranDao.update(userTran);
                     }
                 }
-                System.out.println(usTr.getId());
-                System.out.println("1"+usTr.getStatus()+usTr.getSeller().getFname()+usTr.getBuyer().getFname());
-                System.out.println("2"+userTran.getSeller().getFname()+userTran.getBuyer().getFname());
             }
-
         } else {
             User user = DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId());
-            System.out.println(DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId()).getBalance()-userTran.getMoney());
-            System.out.println(user.getBalance());
             user.setBalance(user.getBalance()-userTran.getMoney());
             DatabaseConfiguration.userDao.update(user);
+            DatabaseConfiguration.usTranDao.create(userTran);
         }
-        DatabaseConfiguration.usTranDao.create(userTran);
         ctx.status(201);
     }
 

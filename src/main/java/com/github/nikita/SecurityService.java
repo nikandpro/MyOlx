@@ -54,7 +54,8 @@ public class SecurityService {
         List<UserTransaction> userTransactionList = new ArrayList<>();
         User user = searchUser(ctx);
         for (UserTransaction userTran: DatabaseConfiguration.usTranDao.queryForAll()) {
-            if (userTran.getBuyer()==user) {
+            if (userTran.getBuyer().getId()==user.getId()) {
+                System.out.println("dkfs");
                 userTransactionList.add(userTran);
             }
         }

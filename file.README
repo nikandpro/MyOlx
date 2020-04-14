@@ -1,0 +1,113 @@
+http://localhost:7123/
+
+enviroment Admin:
+login - JohnJohn
+password - 123doe
+
+enviroment UserBob:
+login - Bobbob
+password - 123don
+
+USER:
+
+create and update example -
+
+http://localhost:7123/user
+{
+	"login":"BobBob",
+	"password":"123don",
+	"fname":"Bob",
+	"lname":"Don",
+	"balance":1300,
+	"phone":"846583",
+	"email":"don@mail.ru"
+
+}
+getAllUser - http://localhost:7123/user
+
+getOneUser - http://localhost:7123/user/1
+
+deleteUser - http://localhost:7123/user/1
+
+
+Product:
+
+create and update example -
+
+http://localhost:7123/product
+{
+	"nameProd":"bice",
+	"adress":"almaty, Tole 11",
+	"price":15
+}
+getAllProduct - http://localhost:7123/product
+
+getOneProduct - http://localhost:7123/product/1
+
+deleteProduct - http://localhost:7123/product/1
+
+
+Reviews:
+
+create and update example -
+
+http://localhost:7123/reviews
+{
+	"product":1,
+	"text":"Cool"
+}
+getAllReviews - http://localhost:7123/reviews
+
+getOneReviews - http://localhost:7123/reviews/1
+
+deleteReviews - http://localhost:7123/reviews/1
+
+
+Categories:
+//Only admin can create categories,but anyone can watch
+
+create and update example -
+
+http://localhost:7123/categories
+{
+	"categoriesName":"all"
+}
+getAllCategories - http://localhost:7123/categories
+
+getOneCategories - http://localhost:7123/categories/1
+
+deleteCategories - http://localhost:7123/categories/1
+
+
+CategoriesProduct:
+//This class is needed to add a product to the category
+
+create and update example -
+
+http://localhost:7123/categoriesProduct
+{
+	"productId":2,
+	"categoriesId":1
+}
+getAllCategoriesProduct - http://localhost:7123/categoriesProduct
+
+getOneCategoriesProduct - http://localhost:7123/categoriesProduct/1
+
+deleteCategoriesProduct - http://localhost:7123/categoriesProduct/1
+
+
+UserTransaction:
+
+create example - http://localhost:7123/usTran
+//To buy, select the status "BUY"
+{
+	"product":1,
+	"status":"BUY"
+}
+//To confirm, select the status "CONFIRM"
+{
+	"product":1,
+	"status":"CONFIRM"
+}
+
+deleteUserTransaction - http://localhost:7123/usTran/1

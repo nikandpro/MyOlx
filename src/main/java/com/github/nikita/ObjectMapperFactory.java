@@ -27,7 +27,7 @@ public class ObjectMapperFactory {
             sm.addSerializer(Reviews.class, new ReviewsSerialize()).addSerializer(new UserSerialize()).addSerializer(new ProductSerialize());
             sm.addDeserializer(Reviews.class, new ReviewsDeserialize());
         } else if (UserTransaction.class == nameClass) {
-            //sm.addSerializer(UserTransaction.class, new ReviewsSerialize()).addSerializer(new UserSerialize()).addSerializer(new ProductSerialize());
+            sm.addSerializer(UserTransaction.class, new UserTransactionSerialize()).addSerializer(new UserSerialize()).addSerializer(new ProductSerialize());
             sm.addDeserializer(UserTransaction.class, new UserTransactionDeserialize());
         }
         return om.registerModule(sm);
