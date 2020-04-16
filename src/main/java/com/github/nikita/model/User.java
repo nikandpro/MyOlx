@@ -17,7 +17,7 @@ public class User {
     private String phone;
     @DatabaseField(columnName = "email")
     private String email;
-    @DatabaseField(columnName = "login")
+    @DatabaseField(unique = true, columnName = "login")
     private String login;
     @DatabaseField(columnName = "password")
     private String password;
