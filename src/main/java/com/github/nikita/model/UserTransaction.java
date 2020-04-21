@@ -13,7 +13,7 @@ public class UserTransaction {
     private User seller;
     @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "buyer")
     private User buyer;
-    @DatabaseField(columnName = "amount of money")
+    @DatabaseField(columnName = "amount_of_money")
     private int money;
     @DatabaseField(columnName = "status")
     private Status status;

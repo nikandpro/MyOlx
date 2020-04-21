@@ -18,32 +18,33 @@ public class UserTransactionController {
         UserTransaction userTran;
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
         userTran = obMap.readValue(json, UserTransaction.class);
-        userTran.setBuyer(SecurityService.searchUser(ctx));
-        //System.out.println("OKKK");
-        if (userTran.getStatus()==Status.CONFIRM) {
-            boolean seach = false;
-            //System.out.println("KKKKKKOOOOOOOOOO");
-            for (UserTransaction usTr : DatabaseConfiguration.usTranDao.queryForAll()) {
-                if (usTr.getStatus() == Status.BUY && usTr.getSeller().getId()==userTran.getSeller().getId() && usTr.getBuyer().getId()==userTran.getBuyer().getId() && usTr.getProduct().getId()==userTran.getProduct().getId()) {
-                    if (!seach) {
-                        userTran.setBeginTime(usTr.getBeginTime());
-                        userTran.setId(usTr.getId());
+        if (SecurityService.searchUser(ctx).getBalance()>userTran.getProduct().getPrice()) {
+            userTran.setBuyer(SecurityService.searchUser(ctx));
+            if (userTran.getStatus() == Status.CONFIRM) {
+                boolean seach = false;
+                for (UserTransaction usTr : DatabaseConfiguration.usTranDao.queryForAll()) {
+                    if (usTr.getStatus() == Status.BUY && usTr.getSeller().getId() == userTran.getSeller().getId() && usTr.getBuyer().getId() == userTran.getBuyer().getId() && usTr.getProduct().getId() == userTran.getProduct().getId()) {
+                        if (!seach) {
+                            userTran.setBeginTime(usTr.getBeginTime());
+                            userTran.setId(usTr.getId());
 
-                        User user = DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId());
-                        user.setBalance(user.getBalance()+userTran.getMoney());
-                        DatabaseConfiguration.userDao.update(user);
-                        
-                        seach = true;
-                        DatabaseConfiguration.usTranDao.update(userTran);
+                            User user = DatabaseConfiguration.userDao.queryForId(userTran.getSeller().getId());
+                            user.setBalance(user.getBalance() + userTran.getMoney());
+                            DatabaseConfiguration.userDao.update(user);
+
+                            seach = true;
+                            DatabaseConfiguration.usTranDao.update(userTran);
+                        }
                     }
                 }
+            } else {
+                User user = DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId());
+                user.setBalance(user.getBalance() - userTran.getMoney());
+                DatabaseConfiguration.userDao.update(user);
+                DatabaseConfiguration.usTranDao.create(userTran);
             }
-        } else {
-            User user = DatabaseConfiguration.userDao.queryForId(userTran.getBuyer().getId());
-            user.setBalance(user.getBalance()-userTran.getMoney());
-            DatabaseConfiguration.userDao.update(user);
-            DatabaseConfiguration.usTranDao.create(userTran);
-        }
+        } else
+            ctx.status(400);
         ctx.status(201);
     }
 
