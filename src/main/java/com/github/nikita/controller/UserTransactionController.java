@@ -45,7 +45,6 @@ public class UserTransactionController {
             }
         } else
             ctx.status(400);
-        ctx.status(201);
     }
 
     public static void getAllUserTran(Context ctx) throws SQLException, JsonProcessingException {
@@ -95,7 +94,7 @@ public class UserTransactionController {
                 }
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 if (DatabaseConfiguration.usTranDao.queryForId(id) != null) {
-                    if (SecurityService.searchUser(ctx) == DatabaseConfiguration.usTranDao.queryForId(id).getBuyer()) {
+                    if (SecurityService.searchUser(ctx).getId() == DatabaseConfiguration.usTranDao.queryForId(id).getBuyer().getId()) {
                         DatabaseConfiguration.usTranDao.deleteById(id);
                         ctx.status(204);
                     } else {

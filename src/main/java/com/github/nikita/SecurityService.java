@@ -4,12 +4,16 @@ import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
 import com.github.nikita.model.UserTransaction;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import io.javalin.http.Context;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.nikita.configuration.DatabaseConfiguration.connectionSource;
 
 public class SecurityService {
     public static String encryption(String password) {
@@ -60,5 +64,13 @@ public class SecurityService {
             }
         }
         return userTransactionList;
+    }
+
+    public <T> List<T> jn(Context ctx, Dao<T, Integer> dao) throws SQLException {
+        List<T> list = new ArrayList<>();
+        for (T ob : dao.queryForAll()) {
+            list.add(ob);
+        }
+        return list;
     }
 }

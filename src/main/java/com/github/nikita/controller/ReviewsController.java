@@ -20,6 +20,7 @@ public class ReviewsController {
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Reviews.class);
         reviews = obMap.readValue(json, Reviews.class);
         reviews.setUser(SecurityService.searchUser(ctx));
+        System.out.println(reviews.getUser().getFname());
         DatabaseConfiguration.revDao.create(reviews);
         ctx.status(201);
     }
@@ -67,6 +68,7 @@ public class ReviewsController {
                 if (DatabaseConfiguration.revDao.queryForId(id) != null) {
                     if (DatabaseConfiguration.revDao.queryForId(id).getUser().getId() == SecurityService.searchUser(ctx).getId()) {
                         reviews.setId(id);
+                        reviews.setUser(SecurityService.searchUser(ctx));
                         DatabaseConfiguration.revDao.update(reviews);
                         ctx.status(201);
                     } else {
