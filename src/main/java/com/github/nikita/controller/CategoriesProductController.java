@@ -8,6 +8,7 @@ import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.Product;
 import com.github.nikita.model.CategoriesProduct;
 import com.github.nikita.model.Role;
+import com.github.nikita.model.User;
 import io.javalin.http.Context;
 
 import java.io.IOException;
@@ -27,8 +28,9 @@ public class CategoriesProductController {
     public static void getAllCategoriesProduct(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(CategoriesProduct.class);
-            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.catProdDao.queryForAll()));
+            SecurityService.get(ctx, DatabaseConfiguration.catProdDao, obMap);
             ctx.status(201);
+            ctx.status(200);
         } else
             ctx.status(401);
     }
@@ -40,7 +42,7 @@ public class CategoriesProductController {
             CategoriesProduct categProd = DatabaseConfiguration.catProdDao.queryForId(id);
             if (categProd != null) {
                 ctx.result(obMap.writeValueAsString(categProd));
-                ctx.status(201);
+                ctx.status(200);
             } else
                 ctx.status(404);
         } else

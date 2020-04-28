@@ -8,6 +8,7 @@ import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.Product;
 import com.github.nikita.model.Reviews;
 import com.github.nikita.model.Role;
+import com.github.nikita.model.User;
 import io.javalin.http.Context;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ public class ReviewsController {
         ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Reviews.class);
         reviews = obMap.readValue(json, Reviews.class);
         reviews.setUser(SecurityService.searchUser(ctx));
-        System.out.println(reviews.getUser().getFname());
         DatabaseConfiguration.revDao.create(reviews);
         ctx.status(201);
     }
@@ -28,8 +28,8 @@ public class ReviewsController {
     public static void getAllReviews(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Reviews.class);
-            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.revDao.queryForAll()));
-            ctx.status(201);
+            SecurityService.get(ctx, DatabaseConfiguration.revDao, obMap);
+            ctx.status(200);
         } else
             ctx.status(401);
     }
@@ -41,7 +41,7 @@ public class ReviewsController {
             Reviews reviews = DatabaseConfiguration.revDao.queryForId(id);
             if (reviews != null) {
                 ctx.result(obMap.writeValueAsString(reviews));
-                ctx.status(201);
+                ctx.status(200);
             } else
                 ctx.status(404);
         } else

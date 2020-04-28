@@ -34,6 +34,7 @@ public class UserTransactionController {
 
                             seach = true;
                             DatabaseConfiguration.usTranDao.update(userTran);
+                            ctx.status(201);
                         }
                     }
                 }
@@ -42,6 +43,7 @@ public class UserTransactionController {
                 user.setBalance(user.getBalance() - userTran.getMoney());
                 DatabaseConfiguration.userDao.update(user);
                 DatabaseConfiguration.usTranDao.create(userTran);
+                ctx.status(201);
             }
         } else
             ctx.status(400);
@@ -52,11 +54,11 @@ public class UserTransactionController {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
                 ctx.result(obMap.writeValueAsString(DatabaseConfiguration.usTranDao.queryForAll()));
-                ctx.status(201);
+                ctx.status(200);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
                 ctx.result(obMap.writeValueAsString(SecurityService.searchUserTran(ctx)));
-                ctx.status(201);
+                ctx.status(200);
             }
         } else
             ctx.status(401);
@@ -68,12 +70,12 @@ public class UserTransactionController {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
                 ctx.result(obMap.writeValueAsString(DatabaseConfiguration.usTranDao.queryForId(id)));
-                ctx.status(201);
+                ctx.status(200);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 if (DatabaseConfiguration.usTranDao.queryForId(id).getBuyer() == SecurityService.searchUser(ctx)) {
                     ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
                     ctx.result(obMap.writeValueAsString(DatabaseConfiguration.usTranDao.queryForId(id)));
-                    ctx.status(201);
+                    ctx.status(200);
                 } else
                     ctx.status(403);
 

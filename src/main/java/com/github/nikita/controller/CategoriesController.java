@@ -33,7 +33,8 @@ public class CategoriesController {
     public static void getAllCategories(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
-            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.categDao.queryForAll()));
+            SecurityService.get(ctx, DatabaseConfiguration.categDao, obMap);
+            ctx.status(200);
         } else
             ctx.status(401);
     }
@@ -45,7 +46,7 @@ public class CategoriesController {
             Categories categ = DatabaseConfiguration.categDao.queryForId(id);
             if (categ != null) {
                 ctx.result(obMap.writeValueAsString(categ));
-                ctx.status(201);
+                ctx.status(200);
             } else
                 ctx.status(404);
         } else
@@ -81,7 +82,7 @@ public class CategoriesController {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 if (DatabaseConfiguration.categDao.queryForId(id) != null) {
                     DatabaseConfiguration.categDao.deleteById(id);
-                    System.out.println(id);
+
                     ctx.status(204);
                 } else {
                     ctx.status(404);

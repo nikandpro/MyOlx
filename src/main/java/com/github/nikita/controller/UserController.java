@@ -10,6 +10,7 @@ import com.github.nikita.model.Role;
 import com.github.nikita.model.User;
 import io.javalin.http.Context;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -27,8 +28,8 @@ public class UserController {
     public static void getAllUser(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(User.class);
-            ctx.result(obMap.writeValueAsString(DatabaseConfiguration.userDao.queryForAll()));
-            ctx.status(201);
+            SecurityService.get(ctx, DatabaseConfiguration.userDao, obMap);
+            ctx.status(200);
         } else
             ctx.status(401);
     }
@@ -40,7 +41,7 @@ public class UserController {
             User user = DatabaseConfiguration.userDao.queryForId(id);
             if (user != null) {
                 ctx.result(obMap.writeValueAsString(user));
-                ctx.status(201);
+                ctx.status(200);
             } else
                 ctx.status(404);
         } else
