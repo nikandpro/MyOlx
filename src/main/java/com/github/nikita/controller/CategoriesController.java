@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
+import com.github.nikita.Service;
 import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.*;
 import io.javalin.http.Context;
@@ -33,7 +34,7 @@ public class CategoriesController {
     public static void getAllCategories(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(Categories.class);
-            SecurityService.get(ctx, DatabaseConfiguration.categDao, obMap);
+            ctx.result(obMap.writeValueAsString(Service.get(ctx, DatabaseConfiguration.categDao, obMap)));
             ctx.status(200);
         } else
             ctx.status(401);

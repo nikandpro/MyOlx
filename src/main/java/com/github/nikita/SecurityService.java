@@ -68,16 +68,4 @@ public class SecurityService {
         return userTransactionList;
     }
 
-    public static <T> void get(Context ctx, Dao<T, Integer> dao, ObjectMapper obMap) throws SQLException, JsonProcessingException {
-        if (ctx.queryParam("size")!=null) {
-            int size = Integer.parseInt(ctx.queryParam("size"));
-            List<T> list = new ArrayList<>();
-            for (int i=1; i<=size; i++ ) {
-                list.add(dao.queryForId(i));
-            }
-            ctx.result(obMap.writeValueAsString(list));
-        } else {
-            ctx.result(obMap.writeValueAsString(dao.queryForAll()));
-        }
-    }
 }

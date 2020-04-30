@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
+import com.github.nikita.Service;
 import com.github.nikita.configuration.DatabaseConfiguration;
-import com.github.nikita.model.Product;
 import com.github.nikita.model.CategoriesProduct;
 import com.github.nikita.model.Role;
-import com.github.nikita.model.User;
 import io.javalin.http.Context;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class CategoriesProductController {
     public static void getAllCategoriesProduct(Context ctx) throws SQLException, JsonProcessingException {
         if (SecurityService.authentication(ctx)) {
             ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(CategoriesProduct.class);
-            SecurityService.get(ctx, DatabaseConfiguration.catProdDao, obMap);
+            ctx.result(obMap.writeValueAsString(Service.get(ctx, DatabaseConfiguration.catProdDao, obMap)));
             ctx.status(201);
             ctx.status(200);
         } else

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikita.ObjectMapperFactory;
 import com.github.nikita.SecurityService;
+import com.github.nikita.Service;
 import com.github.nikita.configuration.DatabaseConfiguration;
 import com.github.nikita.model.*;
 import io.javalin.http.Context;
@@ -53,7 +54,7 @@ public class UserTransactionController {
         if (SecurityService.authentication(ctx)) {
             if (SecurityService.authorization(ctx) == Role.ADMIN) {
                 ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
-                ctx.result(obMap.writeValueAsString(DatabaseConfiguration.usTranDao.queryForAll()));
+                ctx.result(obMap.writeValueAsString(Service.get(ctx, DatabaseConfiguration.usTranDao, obMap)));
                 ctx.status(200);
             } else if (SecurityService.authorization(ctx) == Role.USER) {
                 ObjectMapper obMap = ObjectMapperFactory.createObjectMapper(UserTransaction.class);
